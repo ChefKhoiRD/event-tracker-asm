@@ -47,7 +47,7 @@ SunsetTime:
   AND R3, R3, #0          ; Clear R3 for ones digit
   ADD R3, R1, #0          ; Copy hour value to R3
   
-  ; Convert digits to ASCII and output
+  ; Convert digits to ASCII and output - Should probably write another TranslateToASCII routine
   ADD R0, R2, #16         ; Add 16
   ADD R0, R0, #16         ; Add another 16
   ADD R0, R0, #16         ; Add another 16 (+48)
@@ -57,6 +57,8 @@ SunsetTime:
   ADD R0, R0, #16         ; Add another 16
   ADD R0, R0, #16         ; Add another 16 (+48)
   OUT                     ; Print ones digit (Hour)
+
+  ; I think this actually outputs an ASCII value rather than a double digit number - NEED TO FIX
   
   ; Print colon
   LD R0, COLON
@@ -70,7 +72,7 @@ SunsetTime:
   AND R3, R3, #0          ; Clear R3 for ones digit
   ADD R3, R1, #0          ; Copy minute value to R3
   
-  ; Convert digits to ASCII and output
+  ; Convert digits to ASCII and output - Should probably write another TranslateToASCII routine
   ADD R0, R2, #16         ; Add 16
   ADD R0, R0, #16         ; Add another 16
   ADD R0, R0, #16         ; Add another 16 (+48)
@@ -80,6 +82,8 @@ SunsetTime:
   ADD R0, R0, #16         ; Add another 16
   ADD R0, R0, #16         ; Add another 16 (+48)
   OUT                     ; Print ones digit (Minute)
+
+  ; I think this actually outputs an ASCII value rather than a double digit number - NEED TO FIX
   
   RET
 
