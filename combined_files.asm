@@ -1,0 +1,70 @@
+    .ORIG x3000
+
+MINUTE_ROUTINE
+    LEA R0, PROMPT_MINUTE
+    PUTS
+
+FIRST_DIGIT
+    GETC
+    OUT
+    LD R5, ASCII
+    ADD R1, R0, R5
+
+SECOND_DIGIT
+    GETC
+    OUT
+    LD R5, ASCII
+    ADD R2, R0, R5
+
+    JSR COMBINE_DIGITS
+    ADD R0, R3, #0
+    JSR VALIDATE_MINUTE
+
+    BRz VALID_MINUTE
+
+INVALID_MINUTE
+    LEA R0, INVALID_MSG
+    PUTS
+    BRnzp MINUTE_ROUTINE
+
+VALID_MINUTE
+    LEA R4, SAVED_MINUTE
+    STR R3, R4, #0
+    HALT
+
+COMBINE_DIGITS
+    AND R3, R3, #0
+    LD R4, DOUBLE_DIGITS
+
+COMBINE_LOOP
+    ADD R3, R3, R1
+    ADD R4, R4, #-1
+    BRp COMBINE_LOOP
+
+    ADD R3, R3, R2
+    RET
+
+VALIDATE_MINUTE
+    BRn INVALID
+
+    LD R1, MAX_MINUTE
+    NOT R1, R1
+    ADD R1, R1, #1
+    ADD R2, R0, R1
+    BRp INVALID
+
+    AND R0, R0, #0
+    RET
+
+INVALID
+    ADD R0, R0, #1
+    RET
+
+PROMPT_MINUTE   .STRINGZ "Enter the minute (00-59): "
+INVALID_MSG     .STRINGZ "\nInvalid minute. Please enter a valid minute (00-59).\n"
+ASCII           .FILL #-48
+DOUBLE_DIGITS   .FILL #10
+MAX_MINUTE      .FILL #59
+SAVED_MINUTE    .BLKW 1
+
+    .END
