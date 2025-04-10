@@ -50,15 +50,15 @@ SunsetTime:
   ; Convert digits to ASCII and output
   ADD R0, R2, #16         ; Add 16
   ADD R0, R0, #16         ; Add another 16
-  ADD R0, R0, #16         ; Add another 16 (total +48)
-  OUT                     ; Print tens digit
+  ADD R0, R0, #16         ; Add another 16 (+48)
+  OUT                     ; Print tens digit (Hour)
 
   ADD R0, R3, #16         ; Add 16
   ADD R0, R0, #16         ; Add another 16
-  ADD R0, R0, #16         ; Add another 16 (total +48)
-  OUT                     ; Print ones digit
+  ADD R0, R0, #16         ; Add another 16 (+48)
+  OUT                     ; Print ones digit (Hour)
   
-  ; Print separator
+  ; Print colon
   LD R0, COLON
   OUT
   
@@ -73,13 +73,13 @@ SunsetTime:
   ; Convert digits to ASCII and output
   ADD R0, R2, #16         ; Add 16
   ADD R0, R0, #16         ; Add another 16
-  ADD R0, R0, #16         ; Add another 16 (total +48)
-  OUT                     ; Print tens digit
+  ADD R0, R0, #16         ; Add another 16 (+48)
+  OUT                     ; Print tens digit (Minute)
 
   ADD R0, R3, #16         ; Add 16
   ADD R0, R0, #16         ; Add another 16
-  ADD R0, R0, #16         ; Add another 16 (total +48)
-  OUT                     ; Print ones digit
+  ADD R0, R0, #16         ; Add another 16 (+48)
+  OUT                     ; Print ones digit (Minute)
   
   RET
 
