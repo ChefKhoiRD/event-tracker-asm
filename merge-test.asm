@@ -34,7 +34,7 @@ GetHourLoop
     ADD R3, R3, #-1
     BRp InvalidHourInput  ; If > 9
     
-    ; Multiply by 10 using repeated addition
+    ; Multiply by 10
     AND R4, R4, #0        ; Clear R4
     ADD R3, R1, #0        ; Copy digit to R3
     
@@ -111,7 +111,7 @@ GetMinuteLoop
     ADD R3, R3, #-1
     BRp InvalidMinuteInput  ; If > 9
     
-    ; Multiply by 10 using repeated addition
+    ; Multiply by 10
     AND R4, R4, #0        ; Clear R4
     ADD R3, R1, #0        ; Copy digit to R3
     
