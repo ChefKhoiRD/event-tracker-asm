@@ -65,7 +65,7 @@ GetHourLoop
     BRp InvalidHourInput  ; If > 9, not a digit
     
     ; Combine digits
-    ADD R1, R4, R1        ; R1 = first_digit*10 + second_digit
+    ADD R1, R4, R1        ; R1 = First digit (x10) + Second Digit
     
     ; Validate hour (0-23)
     BRn InvalidHourInput  ; If negative, invalid
