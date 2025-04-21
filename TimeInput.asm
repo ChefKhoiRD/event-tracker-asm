@@ -29,6 +29,9 @@ HoursRoutine
     LEA R0, PROMPT_H_PTR
     LDR R0, R0, #0
     PUTS
+    
+    LD R5, ASCII        ; Load ASCII constant (-48)
+    ADD R1, R0, R5      ; Convert ASCII to decimal digit
 
 GetHourLoop
     ; Get first digit
@@ -107,7 +110,10 @@ MinuteRoutine
     
     LEA R0, PROMPT_M_PTR
     LDR R0, R0, #0
-    PUTS                       
+    PUTS    
+    
+    LD R5, ASCII        ; Load ASCII constant (-48)
+    ADD R1, R0, R5      ; Convert ASCII to decimal digit
 
 GetMinuteLoop
     GETC
@@ -415,6 +421,7 @@ NL_PTR           .FILL NEWLINE
 DBG_PTR          .FILL DEBUG
 
 ; ASCII values
+ASCII            .FILL #-48
 COLON            .FILL x3A  ; ASCII code for colon (:)
 NEWLINE          .FILL x0A  ; ASCII for newline
 
