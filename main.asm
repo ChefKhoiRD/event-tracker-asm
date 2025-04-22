@@ -112,6 +112,17 @@ InvalidHourInput
     LD R0, ERROR_MSG_PTR
     PUTS
     BR GetHourLoop
+ 
+ 
+; new code bode's event start hour calc
+START_SUBTRACT3
+    ;Gets the Event start time hour by -3 from inputted hour
+    ADD R4, R4, #-3      ; Subtracts 3
+    BRzp SKIP_ERROR      ; Skips error handling
+    ADD R4, R4, #15      ; Makes sure that there is no negative numbers
+    ADD R4, R4, #9
+SKIP_ERROR
+; new code bode's event start hour calc
 
 MinuteRoutine
     ; Clear registers
@@ -297,7 +308,7 @@ MinuteDigit
     ADD R0, R0, #15     ; Add 15
     ADD R0, R0, #3      ; Add 3 (+48)
     OUT                 ; Print ones digit (Minute)
-    
+
     RET
 
 ; Pointers to data
