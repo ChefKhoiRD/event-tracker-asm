@@ -17,7 +17,6 @@
 TIME_INPUT_ADDR    .FILL x4000  ; TimeInput.asm
 TIME_CALC_ADDR     .FILL x5000  ; TimeCalculation.asm
 
-; Headers and display text
 SUNSET_HDR         .STRINGZ "\nSunset Time: "
 
 .END
