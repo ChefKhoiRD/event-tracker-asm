@@ -1,4 +1,4 @@
-.ORIG x5000
+.ORIG x7000
 
 CalculateEventTime
     ; Save return address
@@ -39,17 +39,13 @@ HourDigit
     ADD R3, R3, #10         ; Add back the last 10
     
     ; Convert tens digit to ASCII
-    ADD R0, R2, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R2          ; Add tens digit to convert to ASCII
     OUT                     ; Print tens digit (Hour)
     
     ; Convert ones digit to ASCII
-    ADD R0, R3, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R3          ; Add ones digit to convert to ASCII
     OUT                     ; Print ones digit (Hour)
     
     ; Print colon
@@ -99,17 +95,13 @@ MinuteDigit
     ADD R3, R3, #10         ; Add back the last 10
     
     ; Convert tens digit to ASCII
-    ADD R0, R2, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R2          ; Add tens digit to convert to ASCII
     OUT                     ; Print tens digit (Minute)
     
     ; Convert ones digit to ASCII
-    ADD R0, R3, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R3          ; Add ones digit to convert to ASCII
     OUT                     ; Print ones digit (Minute)
     
     ; Now display Event End time
@@ -147,17 +139,13 @@ EndHourDigit
     ADD R3, R3, #10         ; Add back the last 10
     
     ; Convert tens digit to ASCII
-    ADD R0, R2, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R2          ; Add tens digit to convert to ASCII
     OUT                     ; Print tens digit (Hour)
     
     ; Convert ones digit to ASCII
-    ADD R0, R3, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R3          ; Add ones digit to convert to ASCII
     OUT                     ; Print ones digit (Hour)
     
     ; Print colon
@@ -207,29 +195,25 @@ EndMinuteDigit
     ADD R3, R3, #10         ; Add back the last 10
     
     ; Convert tens digit to ASCII
-    ADD R0, R2, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R2          ; Add tens digit to convert to ASCII
     OUT                     ; Print tens digit (Minute)
     
     ; Convert ones digit to ASCII
-    ADD R0, R3, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R3          ; Add ones digit to convert to ASCII
     OUT                     ; Print ones digit (Minute)
     
-    LD R7, CALC_SAVE_R7
+    LD R7, CALC_SAVE_R7     ; Restore return address
     RET
 
 ; - Constants -
-CALC_SAVE_R7    .BLKW 1     
+CALC_SAVE_R7    .BLKW 1     ; Save location for R7
 
-HOUR_VAL_ADDR   .FILL x400D  
-MINUTE_VAL_ADDR .FILL x400E  
-COLON_CHAR      .FILL x3A    ; ASCII code for colon (:)
-ZERO_CHAR       .FILL x30    ; ASCII code for '0'
+HOUR_VAL_ADDR   .FILL x500D  ; Address of hour value in TimeInput.asm
+MINUTE_VAL_ADDR .FILL x500E  ; Address of minute value in TimeInput.asm
+COLON_CHAR      .FILL x3A    ; ASCII colon (:)
+ASCII_DISPLAY   .FILL x30    ; ASCII for conversion (48)
 
 EVENT_START_MSG .STRINGZ "\nEvent Start: "
 EVENT_END_MSG   .STRINGZ "\nEvent End: "
