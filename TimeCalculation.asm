@@ -9,7 +9,7 @@ CalculateEventTime
     PUTS
     
     ; Load user's input hour from TimeInput.asm
-    LD R0, HOUR_VAL_ADDR    ; Address of HOUR_VAL in TimeInput.asm
+    LD R0, HOUR_VAL_ADDR
     LDR R1, R0, #0          ; Load the hour value from memory
     
     ; Subtract 3 hours from the input
@@ -220,15 +220,14 @@ EndMinuteDigit
     ADD R0, R0, #3          ; Add 3 (+48)
     OUT                     ; Print ones digit (Minute)
     
-    ; Restore return address and return
     LD R7, CALC_SAVE_R7
     RET
 
 ; - Constants -
-CALC_SAVE_R7    .BLKW 1     ; Storage for R7
+CALC_SAVE_R7    .BLKW 1     
 
-HOUR_VAL_ADDR   .FILL x400D  ; Exact address of HOUR_VAL in TimeInput.asm
-MINUTE_VAL_ADDR .FILL x400E  ; Exact address of MINUTE_VAL in TimeInput.asm
+HOUR_VAL_ADDR   .FILL x400D  
+MINUTE_VAL_ADDR .FILL x400E  
 COLON_CHAR      .FILL x3A    ; ASCII code for colon (:)
 ZERO_CHAR       .FILL x30    ; ASCII code for '0'
 
