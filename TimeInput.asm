@@ -1,64 +1,34 @@
-.ORIG x4000
+.ORIG x5000
 
-TimeInputRoutine
-    ST R7, SAVE_R7     ; Save return address
-    
-    LD R6, HOURS_ADDR
-    JSRR R6
-    
-    LD R6, MINUTES_ADDR
-    JSRR R6
-    
-    LD R6, DISPLAY_ADDR
-    JSRR R6
-    
-    LD R7, SAVE_R7     ; Restore return address
-    RET
+; Clear registers
+AND R1, R1, #0
+AND R2, R2, #0
+AND R3, R3, #0
+AND R4, R4, #0
 
-; - Addresses for subroutines -
-HOURS_ADDR      .FILL HoursRoutine
-MINUTES_ADDR    .FILL MinuteRoutine
-DISPLAY_ADDR    .FILL DisplayTimeRoutine
-
-; - Storage Variables -
-SAVE_R7         .BLKW 1     ; Storage for R7
-HOUR_VAL        .BLKW 1     ; Storage for validated hour
-MINUTE_VAL      .BLKW 1     ; Storage for validated minute
-
-; - Constants -
-COLON_CHAR      .FILL x3A   ; ASCII code for colon (:)
-
-; - HOURS ROUTINE -
-HoursRoutine
-    AND R1, R1, #0
-    AND R2, R2, #0
-    AND R3, R3, #0
-    AND R4, R4, #0
-
-    ; Load prompt address and display
-    LD R0, PROMPT_HOUR_ADDR
-    PUTS
+; - Hours Input -
+LEA R0, PromptHour
+PUTS
 
 GetHourLoop
     GETC
     OUT
     
     ; Convert ASCII to decimal
-    ADD R1, R0, #-16      ; Subtract 16
-    ADD R1, R1, #-16      ; Subtract 16
-    ADD R1, R1, #-16      ; Subtract 16
+    LD R5, ASCII_CONVERT    ; Load -48 for conversion
+    ADD R1, R0, R5          ; Convert ASCII to decimal
     
     ; Check if valid digit (0-9)
-    BRn InvalidHourInput  ; If negative
+    BRn InvalidHourInput    ; If negative
     ADD R3, R1, #-9
     ADD R3, R3, #-1
-    BRp InvalidHourInput  ; If > 9
+    BRp InvalidHourInput    ; If > 9
     
     ; Multiply by 10
-    AND R4, R4, #0        ; Clear R4
-    ADD R3, R1, #0        ; Copy digit to R3
+    AND R4, R4, #0          ; Clear R4
+    ADD R3, R1, #0          ; Copy digit to R3
     
-    ADD R4, R4, R3        ; Multiply
+    ADD R4, R4, R3          ; Multiply by 10 (add 10 times)
     ADD R4, R4, R3
     ADD R4, R4, R3
     ADD R4, R4, R3
@@ -74,39 +44,38 @@ GetHourLoop
     OUT
     
     ; Convert ASCII to decimal
-    ADD R1, R0, #-16      ; Subtract 16
-    ADD R1, R1, #-16      ; Subtract 16
-    ADD R1, R1, #-16      ; Subtract 16
+    LD R5, ASCII_CONVERT    ; Load -48 for conversion
+    ADD R1, R0, R5          ; Convert ASCII to decimal
     
     ; Check if valid digit (0-9)
-    BRn InvalidHourInput  ; If negative, not a digit
+    BRn InvalidHourInput    ; If negative, not a digit
     ADD R3, R1, #-9
     ADD R3, R3, #-1
-    BRp InvalidHourInput  ; If > 9, not a digit
+    BRp InvalidHourInput    ; If > 9, not a digit
     
     ; Combine digits
-    ADD R1, R4, R1        ; R1 = First digit (x10) + Second Digit
+    ADD R1, R4, R1          ; R1 = First digit (x10) + Second Digit
     
     ; Validate hour (0-23)
-    BRn InvalidHourInput  ; If negative, invalid
+    BRn InvalidHourInput    ; If negative, invalid
     
     ; Check if hour > 23
-    ADD R2, R1, #-16      ; Subtract 16
-    ADD R2, R2, #-7       ; Subtract 7 (total 23)
-    BRp InvalidHourInput  ; If > 23, invalid
+    ADD R2, R1, #-16        ; Subtract 16
+    ADD R2, R2, #-7         ; Subtract 7 (total 23)
+    BRp InvalidHourInput    ; If > 23, invalid
     
-    ; Store valid hour using absolute addressing
-    ST R1, HOUR_VAL       ; Store directly to memory
-    RET
+    ; Store valid hour
+    ST R1, HOUR_VAL         ; Store directly to memory
+    BR MinuteInput          ; Branch to next section
 
 InvalidHourInput
     ; Load error message and display
-    LD R0, ERROR_HOUR_ADDR
+    LEA R0, ErrorMsg
     PUTS
     BR GetHourLoop
 
-; - MINUTES ROUTINE -
-MinuteRoutine
+; - Mintues Input -
+MinuteInput
     ; Clear registers
     AND R1, R1, #0
     AND R2, R2, #0
@@ -114,7 +83,7 @@ MinuteRoutine
     AND R4, R4, #0
     
     ; Load prompt and display
-    LD R0, PROMPT_MIN_ADDR
+    LEA R0, PromptMinute
     PUTS                       
 
 GetMinuteLoop
@@ -123,9 +92,8 @@ GetMinuteLoop
     OUT
     
     ; Convert ASCII to decimal
-    ADD R1, R0, #-16      ; Subtract 16
-    ADD R1, R1, #-16      ; Subtract 16
-    ADD R1, R1, #-16      ; Subtract 16 (-48)
+    LD R5, ASCII_CONVERT    ; Load -48 for conversion
+    ADD R1, R0, R5          ; Convert ASCII to decimal
     
     ; Check if valid digit (0-9)
     BRn InvalidMinuteInput  ; If negative
@@ -134,10 +102,10 @@ GetMinuteLoop
     BRp InvalidMinuteInput  ; If > 9
     
     ; Multiply by 10
-    AND R4, R4, #0        ; Clear R4
-    ADD R3, R1, #0        ; Copy digit to R3
+    AND R4, R4, #0          ; Clear R4
+    ADD R3, R1, #0          ; Copy digit to R3
     
-    ADD R4, R4, R3        ; Multiply
+    ADD R4, R4, R3          ; Multiply by 10 (add 10 times)
     ADD R4, R4, R3
     ADD R4, R4, R3
     ADD R4, R4, R3
@@ -153,9 +121,8 @@ GetMinuteLoop
     OUT
     
     ; Convert ASCII to decimal
-    ADD R1, R0, #-16        ; Subtract 16
-    ADD R1, R1, #-16        ; Subtract 16
-    ADD R1, R1, #-16        ; Subtract 16
+    LD R5, ASCII_CONVERT    ; Load -48 for conversion
+    ADD R1, R0, R5          ; Convert ASCII to decimal
     
     ; Check if valid digit (0-9)
     BRn InvalidMinuteInput  ; If negative
@@ -178,25 +145,26 @@ GetMinuteLoop
     BRp InvalidMinuteInput  ; If > 59
     
     ST R1, MINUTE_VAL       ; Store directly to memory
-    RET
+    BR DisplayTime          ; Branch to display section
 
 InvalidMinuteInput
     ; Load error message and display
-    LD R0, ERROR_MIN_ADDR
+    LEA R0, ErrorMinute
     PUTS
     BR GetMinuteLoop
 
-DisplayTimeRoutine
+; - Display Time Section -
+DisplayTime
     ; Load and display sunset message
-    LD R0, SUNSET_MSG_ADDR
+    LEA R0, SUNSET_MSG
     PUTS
     
     ; Load Hour from memory using direct addressing
     LD R1, HOUR_VAL         ; Load validated hour directly from memory
     
     ; Division by 10 for hours
-    AND R2, R2, #0          ; Clear R2
-    AND R3, R3, #0          ; Clear R3
+    AND R2, R2, #0          ; Clear R2 for tens digit
+    AND R3, R3, #0          ; Clear R3 for ones digit
     ADD R3, R1, #0          ; Copy hour to R3
     
     ; Check for tens digit - 0 (0-9)
@@ -215,20 +183,16 @@ DisplayTimeRoutine
     ADD R2, R2, #1      
     
 HourDigit
-    ADD R3, R3, #10
+    ADD R3, R3, #10         ; Add back the last 10
     
     ; Convert tens digit to ASCII
-    ADD R0, R2, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R2          ; Add tens digit to convert to ASCII
     OUT                     ; Print tens digit (Hour)
     
     ; Convert ones digit to ASCII
-    ADD R0, R3, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R3          ; Add ones digit to convert to ASCII
     OUT                     ; Print ones digit (Hour)
     
     ; Print colon
@@ -239,70 +203,70 @@ HourDigit
     LD R1, MINUTE_VAL
     
     ; Division by 10
-    AND R2, R2, #0          ; Clear R2
-    AND R3, R3, #0          ; Clear R3
+    AND R2, R2, #0          ; Clear R2 for tens digit
+    AND R3, R3, #0          ; Clear R3 for ones digit
     ADD R3, R1, #0          ; Copy minute to R3
     
     ; Check for tens digit - 0 (0-9)
     ADD R3, R3, #-10
-    BRn MinuteDigit         ; If < 10
+    BRn MinuteDigit         ; If < 10, tens digit is 0
     ADD R2, R2, #1          
     
     ; Check for tens digit - 1 (10-19)
     ADD R3, R3, #-10    
-    BRn MinuteDigit         ; If < 20
+    BRn MinuteDigit         ; If < 20, tens digit is 1
     ADD R2, R2, #1          
     
     ; Check for tens digit - 2 (20-29)
     ADD R3, R3, #-10
-    BRn MinuteDigit         ; If < 30
+    BRn MinuteDigit         ; If < 30, tens digit is 2
     ADD R2, R2, #1          
     
     ; Check for tens digit - 3 (30-39)
     ADD R3, R3, #-10
-    BRn MinuteDigit         ; If < 40
+    BRn MinuteDigit         ; If < 40, tens digit is 3
     ADD R2, R2, #1          
     
     ; Check for tens digit - 4 (40-49)
     ADD R3, R3, #-10
-    BRn MinuteDigit         ; If < 50
+    BRn MinuteDigit         ; If < 50, tens digit is 4
     ADD R2, R2, #1          
     
     ; Check for tens digit - 5 (50-59)
     ADD R3, R3, #-10
-    BRn MinuteDigit         ; If < 60
+    BRn MinuteDigit         ; If < 60, tens digit is 5
     ADD R2, R2, #1          
     
 MinuteDigit
     ADD R3, R3, #10         ; Add back the last 10
     
     ; Convert tens digit to ASCII
-    ADD R0, R2, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R2          ; Add tens digit to convert to ASCII
     OUT                     ; Print tens digit (Minute)
     
     ; Convert ones digit to ASCII
-    ADD R0, R3, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #15         ; Add 15
-    ADD R0, R0, #3          ; Add 3 (+48)
+    LD R0, ASCII_DISPLAY    ; Load ASCII conversion constant
+    ADD R0, R0, R3          ; Add ones digit to convert to ASCII
     OUT                     ; Print ones digit (Minute)
     
+    ; Return to main program
     RET
 
 ; - Constants -
-PROMPT_HOUR_ADDR  .FILL PromptHour
-ERROR_HOUR_ADDR   .FILL ErrorMsg
-PROMPT_MIN_ADDR   .FILL PromptMinute
-ERROR_MIN_ADDR    .FILL ErrorMinute
-SUNSET_MSG_ADDR   .FILL SUNSET_MSG
+COLON_CHAR      .FILL x3A   ; ASCII code for colon (:)
+ASCII_DISPLAY   .FILL x30   ; ASCII code for '0' (48)
+ASCII_CONVERT   .FILL #-48  ; For converting ASCII to decimal
 
-PromptHour        .STRINGZ "Enter the hour (00-23): \n"
-ErrorMsg          .STRINGZ "\nInvalid hour. Please enter a valid hour (00-23).\n"
-PromptMinute      .STRINGZ "\nEnter the minute (00-59): \n"
-ErrorMinute       .STRINGZ "\nInvalid minute. Please enter a valid minute (00-59).\n"
-SUNSET_MSG        .STRINGZ "\nSunset time entered: \n"
+; - Storage Variables -
+HOUR_VAL        .BLKW 1     ; Storage for validated hour
+MINUTE_VAL      .BLKW 1     ; Storage for validated minute
+
+; - String Messages -
+PromptHour      .STRINGZ "Enter the hour (00-23): \n"
+ErrorMsg        .STRINGZ "\nInvalid hour. Please enter a valid hour (00-23).\n"
+PromptMinute    .STRINGZ "\nEnter the minute (00-59): \n"
+ErrorMinute     .STRINGZ "\nInvalid minute. Please enter a valid minute (00-59).\n"
+SUNSET_MSG      .STRINGZ "\nSunset time entered: \n"
 
 .END
