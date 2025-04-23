@@ -210,8 +210,8 @@ EndMinuteDigit
 ; - Constants -
 CALC_SAVE_R7    .BLKW 1     ; Save location for R7
 
-HOUR_VAL_ADDR   .FILL x500D  ; Address of hour value in TimeInput.asm
-MINUTE_VAL_ADDR .FILL x500E  ; Address of minute value in TimeInput.asm
+HOUR_VAL_ADDR   .FILL x5093  ; Address of hour value in TimeInput.asm
+MINUTE_VAL_ADDR .FILL x5094  ; Address of minute value in TimeInput.asm
 COLON_CHAR      .FILL x3A    ; ASCII colon (:)
 ASCII_DISPLAY   .FILL x30    ; ASCII for conversion (48)
 
